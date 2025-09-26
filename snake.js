@@ -1,4 +1,4 @@
- // Initialize canvas and context
+        // Initialize canvas and context
         var canvas = document.getElementById("canvas");
         var ctx = canvas.getContext("2d");
         
@@ -15,9 +15,8 @@
         var snakeSize = 10;
         var snake = [];
         var snakeLength = 5;
-        var snakeX = canvas.width / 2;
-        var snakeY = canvas.height / 2;
-        var snakeSpeed = 10;
+        var snakeX = Math.floor(canvas.width / (2 * snakeSize)) * snakeSize; // Align to grid
+        var snakeY = Math.floor(canvas.height / (2 * snakeSize)) * snakeSize; // Align to grid
         var snakeDirection = "right";
         var nextDirection = "right";
         
@@ -30,12 +29,19 @@
         var state = "";
         var score = 0;
         var gameLoopId;
+        var lastUpdateTime = 0;
+        
+        // Speed control variables
+        var baseSpeed = 150; // Base delay in milliseconds (slower = higher number)
+        var currentSpeed = baseSpeed;
+        var speedMultiplier = 1;
         
         // Add initial snake segments
         function initSnake() {
             snake = [];
-            snakeX = canvas.width / 2;
-            snakeY = canvas.height / 2;
+            // Ensure starting position is aligned to grid
+            snakeX = Math.floor(canvas.width / (2 * snakeSize)) * snakeSize;
+            snakeY = Math.floor(canvas.height / (2 * snakeSize)) * snakeSize;
             for (var i = 0; i < snakeLength; i++) {
                 snake.push({ x: snakeX - i * snakeSize, y: snakeY });
             }
@@ -98,24 +104,24 @@
             // Update direction only after moving to prevent 180-degree turns
             snakeDirection = nextDirection;
             
-            // Move snake
+            // Move snake by exact grid size (10 pixels)
             switch (snakeDirection) {
                 case "up":
-                    snakeY -= snakeSpeed;
+                    snakeY -= snakeSize;
                     break;
                 case "down":
-                    snakeY += snakeSpeed;
+                    snakeY += snakeSize;
                     break;
                 case "left":
-                    snakeX -= snakeSpeed;
+                    snakeX -= snakeSize;
                     break;
                 case "right":
-                    snakeX += snakeSpeed;
+                    snakeX += snakeSize;
                     break;
             }
             
             // Check for collision with food
-            if (snakeX == foodX && snakeY == foodY) {
+            if (snakeX === foodX && snakeY === foodY) {
                 // Increase snake length
                 snakeLength++;
                 
@@ -144,6 +150,11 @@
                 // Increase score
                 score++;
                 document.getElementById("score").innerHTML = "Score: " + score;
+                
+                // Increase speed every 3 points (adjust as needed)
+                if (score > 0 && score % 3 === 0) {
+                    increaseSpeed();
+                }
             }
             
             // Check for collision with edges
@@ -171,6 +182,19 @@
             // Remove last snake segment if snake is too long
             if (snake.length > snakeLength) {
                 snake.pop();
+            }
+        }
+        
+        function increaseSpeed() {
+            // Reduce the delay to make the game faster
+            // Minimum speed limit to prevent it from becoming unplayable
+            const minSpeed = 50;
+            const speedReduction = 10; // Reduce delay by 10ms each time
+            
+            if (currentSpeed > minSpeed) {
+                currentSpeed = Math.max(minSpeed, currentSpeed - speedReduction);
+                speedMultiplier = (baseSpeed / currentSpeed).toFixed(1);
+                document.getElementById("speed-info").innerHTML = "Speed: " + speedMultiplier + "x";
             }
         }
         
@@ -257,7 +281,10 @@
             score = 0;
             gameRunning = true;
             state = "";
+            currentSpeed = baseSpeed;
+            speedMultiplier = 1;
             document.getElementById("score").innerHTML = "Score: " + score;
+            document.getElementById("speed-info").innerHTML = "Speed: " + speedMultiplier + "x";
             document.getElementById("state").style.display = "none";
             document.getElementById("replay").style.display = "none";
             
@@ -270,22 +297,29 @@
             if (gameLoopId) {
                 cancelAnimationFrame(gameLoopId);
             }
+            lastUpdateTime = 0;
             gameLoop();
         });
         
-        // Game loop using requestAnimationFrame for smoother animation
-        function gameLoop() {
-            if (gameRunning) {
+        // Game loop using requestAnimationFrame with speed control
+        function gameLoop(timestamp) {
+            if (!gameRunning) return;
+            
+            // Control game speed by checking time elapsed
+            if (timestamp - lastUpdateTime >= currentSpeed) {
                 update();
                 draw();
-                gameLoopId = requestAnimationFrame(gameLoop);
+                lastUpdateTime = timestamp;
             }
+            
+            gameLoopId = requestAnimationFrame(gameLoop);
         }
         
         // Initialize and start the game
         window.addEventListener('load', () => {
             resizeCanvas();
             initSnake();
+            lastUpdateTime = performance.now();
             gameLoop();
         });
         
@@ -295,8 +329,11 @@
             // Adjust snake and food positions if canvas size changed significantly
             if (snake.length > 0) {
                 const head = snake[0];
-                if (head.x >= canvas.width) snakeX = canvas.width - snakeSize;
-                if (head.y >= canvas.height) snakeY = canvas.height - snakeSize;
+                // Realign positions to grid after resize
+                snakeX = Math.floor(head.x / snakeSize) * snakeSize;
+                snakeY = Math.floor(head.y / snakeSize) * snakeSize;
+                snake[0] = {x: snakeX, y: snakeY};
+                
                 if (foodX >= canvas.width) foodX = Math.floor(Math.random() * (canvas.width / snakeSize)) * snakeSize;
                 if (foodY >= canvas.height) foodY = Math.floor(Math.random() * (canvas.height / snakeSize)) * snakeSize;
             }
