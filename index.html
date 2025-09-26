@@ -31,7 +31,7 @@
         }
         
         .game-section {
-            height: 60vh;
+            height: 70vh;
             width: 100%;
             position: relative;
             display: flex;
@@ -42,7 +42,7 @@
         }
         
         .controls-section {
-            height: 40vh;
+            height: 30vh;
             width: 100%;
             background: rgba(0, 0, 0, 0.3);
             display: flex;
@@ -63,6 +63,7 @@
             padding: 8px 16px;
             border-radius: 15px;
             z-index: 10;
+            display: none;
         }
         
         canvas {
@@ -74,6 +75,7 @@
             height: 85%;
             max-width: 450px;
             max-height: 450px;
+            display: none;
         }
         
         #game-state {
@@ -108,6 +110,42 @@
             box-shadow: 0 4px 12px rgba(255, 75, 43, 0.4);
             z-index: 20;
             display: none;
+        }
+        
+        #start-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px 40px;
+            font-size: 24px;
+            background: linear-gradient(to right, #4361ee, #4cc9f0);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.5);
+            z-index: 20;
+            transition: all 0.3s ease;
+        }
+        
+        #start-btn:hover {
+            transform: translate(-50%, -50%) scale(1.05);
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.7);
+        }
+        
+        #instructions {
+            position: absolute;
+            top: 65%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            font-size: 16px;
+            color: #a9d6e5;
+            max-width: 85%;
+            line-height: 1.5;
+            z-index: 15;
         }
         
         .mobile-controls {
@@ -153,6 +191,17 @@
             max-width: 90%;
             line-height: 1.4;
         }
+        
+        .game-title {
+            font-size: 26px;
+            margin-bottom: 8px;
+            text-align: center;
+            background: linear-gradient(to right, #4cc9f0, #4361ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+        
         /* Desktop layout - hide mobile elements */
         @media (min-width: 768px) {
             .mobile-layout {
@@ -187,6 +236,7 @@
                 width: 100%;
                 max-width: 500px;
                 height: auto;
+                display: none;
             }
             
             #desktop-score {
@@ -196,6 +246,35 @@
                 background: rgba(0, 0, 0, 0.3);
                 padding: 8px 20px;
                 border-radius: 20px;
+                display: none;
+            }
+            
+            #desktop-start {
+                padding: 15px 40px;
+                font-size: 24px;
+                background: linear-gradient(to right, #4361ee, #4cc9f0);
+                color: white;
+                border: none;
+                border-radius: 50px;
+                cursor: pointer;
+                font-weight: bold;
+                box-shadow: 0 6px 20px rgba(67, 97, 238, 0.5);
+                margin-bottom: 20px;
+                transition: all 0.3s ease;
+            }
+            
+            #desktop-start:hover {
+                transform: scale(1.05);
+                box-shadow: 0 8px 25px rgba(67, 97, 238, 0.7);
+            }
+            
+            #desktop-instructions {
+                text-align: center;
+                font-size: 18px;
+                color: #a9d6e5;
+                max-width: 500px;
+                line-height: 1.6;
+                margin-bottom: 25px;
             }
             
             .desktop-controls {
@@ -224,7 +303,7 @@
                 transform: scale(0.95);
             }
             
-            .desktop-instructions {
+            .desktop-game-instructions {
                 margin-top: 20px;
                 text-align: center;
                 font-size: 16px;
@@ -246,10 +325,15 @@
     <!-- Mobile Layout (70/30 split) -->
     <div class="mobile-layout">
         <div class="game-section">
+            <h1 class="game-title">SNAKE GAME</h1>
             <div id="score-display">Score: 0</div>
             <canvas id="game-canvas" width="400" height="400"></canvas>
             <div id="game-state"></div>
             <button id="replay-btn">Replay</button>
+            <button id="start-btn">START GAME</button>
+            <div id="instructions">
+                <p>Use the directional buttons below to control the snake.<br>Eat the red food to grow and earn points!</p>
+            </div>
         </div>
         
         <div class="controls-section">
@@ -260,7 +344,7 @@
                 <div class="control-btn down-btn">↓</div>
             </div>
             <div class="game-instructions">
-                <p>Use the buttons to control the snake. Eat red food to grow!</p>
+                <p>Tap buttons to move the snake</p>
             </div>
         </div>
     </div>
@@ -273,6 +357,10 @@
             <canvas id="desktop-canvas" width="400" height="400" class="desktop-canvas"></canvas>
             <div id="desktop-state"></div>
             <button id="desktop-replay" style="display:none;">Replay</button>
+            <button id="desktop-start">START GAME</button>
+            <div id="desktop-instructions">
+                <p>Use <strong>WASD</strong> or arrow keys to control the snake.<br>Eat the red food to grow and earn points!</p>
+            </div>
             
             <div class="desktop-controls">
                 <div class="desktop-key" id="key-w">W</div>
@@ -281,8 +369,8 @@
                 <div class="desktop-key" id="key-d">D</div>
             </div>
             
-            <div class="desktop-instructions">
-                <p>Use <strong>WASD</strong> keys to control the snake. Eat the red food to grow and earn points!</p>
+            <div class="desktop-game-instructions">
+                <p>Press the keys above or use WASD/arrow keys</p>
             </div>
         </div>
     </div>
@@ -292,28 +380,36 @@
         const isMobile = window.innerWidth <= 767;
         
         // Initialize based on device type
-        let canvas, ctx, scoreElement, stateElement, replayButton;
+        let canvas, ctx, scoreElement, stateElement, replayButton, startButton, instructionsElement;
         
         if (isMobile) {
             canvas = document.getElementById('game-canvas');
             scoreElement = document.getElementById('score-display');
             stateElement = document.getElementById('game-state');
             replayButton = document.getElementById('replay-btn');
+            startButton = document.getElementById('start-btn');
+            instructionsElement = document.getElementById('instructions');
         } else {
             canvas = document.getElementById('desktop-canvas');
             scoreElement = document.getElementById('desktop-score');
             stateElement = document.getElementById('desktop-state');
             replayButton = document.getElementById('desktop-replay');
+            startButton = document.getElementById('desktop-start');
+            instructionsElement = document.getElementById('desktop-instructions');
         }
         
         ctx = canvas.getContext("2d");
+        
+        // Game state
+        let gameStarted = false;
+        let gameRunning = false;
         
         // Set canvas dimensions
         function resizeCanvas() {
             if (isMobile) {
                 const gameSection = document.querySelector('.game-section');
-                const availableHeight = gameSection.clientHeight * 0.85; // 85% of game section
-                const availableWidth = gameSection.clientWidth * 0.95; // 95% of game section
+                const availableHeight = gameSection.clientHeight * 0.85;
+                const availableWidth = gameSection.clientWidth * 0.95;
                 const maxSize = Math.min(availableWidth, availableHeight, 450);
                 canvas.width = maxSize;
                 canvas.height = maxSize;
@@ -333,7 +429,6 @@
         let snakeDirection = "right";
         let nextDirection = "right";
         let foodX, foodY;
-        let gameRunning = true;
         let score = 0;
         let gameLoopId;
         let lastUpdateTime = 0;
@@ -468,51 +563,100 @@
             replayButton.style.display = "block";
         }
         
+        // Start the game
+        function startGame() {
+            if (gameStarted) return;
+            
+            gameStarted = true;
+            gameRunning = true;
+            score = 0;
+            snakeLength = 5;
+            currentSpeed = baseSpeed;
+            
+            // Hide start elements
+            startButton.style.display = "none";
+            instructionsElement.style.display = "none";
+            
+            // Show game elements
+            canvas.style.display = "block";
+            scoreElement.style.display = "block";
+            
+            // Initialize game
+            initSnake();
+            initFood();
+            scoreElement.textContent = "Score: " + score;
+            
+            // Start game loop
+            lastUpdateTime = performance.now();
+            gameLoop();
+        }
+        
         // Input handling
         function setupInput() {
             // Keyboard for desktop
             document.addEventListener("keydown", function (event) {
-                if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd', 'W', 'A', 'S', 'D'].includes(event.key)) {
+                // Start game on any key press if not started
+                if (!gameStarted && !isMobile) {
+                    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd', 'W', 'A', 'S', 'D', ' '].includes(event.key)) {
+                        startGame();
+                        return;
+                    }
+                }
+                
+                if (gameRunning && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd', 'W', 'A', 'S', 'D'].includes(event.key)) {
                     event.preventDefault();
                 }
                 
-                switch (event.key.toLowerCase()) {
-                    case "w":
-                    case "arrowup":
-                        if (snakeDirection !== "down") nextDirection = "up";
-                        if (!isMobile) highlightKey('w');
-                        break;
-                    case "s":
-                    case "arrowdown":
-                        if (snakeDirection !== "up") nextDirection = "down";
-                        if (!isMobile) highlightKey('s');
-                        break;
-                    case "a":
-                    case "arrowleft":
-                        if (snakeDirection !== "right") nextDirection = "left";
-                        if (!isMobile) highlightKey('a');
-                        break;
-                    case "d":
-                    case "arrowright":
-                        if (snakeDirection !== "left") nextDirection = "right";
-                        if (!isMobile) highlightKey('d');
-                        break;
+                if (gameRunning) {
+                    switch (event.key.toLowerCase()) {
+                        case "w":
+                        case "arrowup":
+                            if (snakeDirection !== "down") nextDirection = "up";
+                            if (!isMobile) highlightKey('w');
+                            break;
+                        case "s":
+                        case "arrowdown":
+                            if (snakeDirection !== "up") nextDirection = "down";
+                            if (!isMobile) highlightKey('s');
+                            break;
+                        case "a":
+                        case "arrowleft":
+                            if (snakeDirection !== "right") nextDirection = "left";
+                            if (!isMobile) highlightKey('a');
+                            break;
+                        case "d":
+                        case "arrowright":
+                            if (snakeDirection !== "left") nextDirection = "right";
+                            if (!isMobile) highlightKey('d');
+                            break;
+                    }
                 }
             });
             
             // Mobile controls
             if (isMobile) {
+                // Start game on first button press
+                const mobileButtons = document.querySelectorAll('.control-btn');
+                mobileButtons.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        if (!gameStarted) {
+                            startGame();
+                        }
+                    });
+                });
+                
+                // Direction controls (only when game is running)
                 document.querySelector('.up-btn').addEventListener('click', () => {
-                    if (snakeDirection !== "down") nextDirection = "up";
+                    if (gameRunning && snakeDirection !== "down") nextDirection = "up";
                 });
                 document.querySelector('.down-btn').addEventListener('click', () => {
-                    if (snakeDirection !== "up") nextDirection = "down";
+                    if (gameRunning && snakeDirection !== "up") nextDirection = "down";
                 });
                 document.querySelector('.left-btn').addEventListener('click', () => {
-                    if (snakeDirection !== "right") nextDirection = "left";
+                    if (gameRunning && snakeDirection !== "right") nextDirection = "left";
                 });
                 document.querySelector('.right-btn').addEventListener('click', () => {
-                    if (snakeDirection !== "left") nextDirection = "right";
+                    if (gameRunning && snakeDirection !== "left") nextDirection = "right";
                 });
             } else {
                 // Desktop key highlighting
@@ -528,9 +672,9 @@
         
         // Replay functionality
         replayButton.addEventListener("click", function () {
-            snakeLength = 5;
-            score = 0;
             gameRunning = true;
+            score = 0;
+            snakeLength = 5;
             currentSpeed = baseSpeed;
             scoreElement.textContent = "Score: " + score;
             stateElement.style.display = "none";
@@ -545,6 +689,9 @@
             lastUpdateTime = performance.now();
             gameLoop();
         });
+        
+        // Start button functionality
+        startButton.addEventListener("click", startGame);
         
         // Game loop
         function gameLoop(timestamp) {
@@ -562,25 +709,22 @@
         // Initialize game
         function initGame() {
             resizeCanvas();
-            initSnake();
-            initFood();
             setupInput();
-            lastUpdateTime = performance.now();
-            gameLoop();
         }
         
         // Handle resize
         window.addEventListener('resize', function() {
-            // Only resize if the device type hasn't changed
             const newIsMobile = window.innerWidth <= 767;
             if (newIsMobile === isMobile) {
                 resizeCanvas();
-                initSnake();
-                initFood();
+                if (gameStarted) {
+                    initSnake();
+                    initFood();
+                }
             }
         });
         
-        // Start the game
+        // Start the game initialization
         window.addEventListener('load', initGame);
         
         // Prevent touch scrolling
