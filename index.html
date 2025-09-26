@@ -5,31 +5,35 @@
     <link rel="stylesheet" href="snake.css">
 </head>
 <body>
-     <div class="game-container">
-        <h1 class="game-title">SNAKE GAME</h1>
-        <div id="score">Score: 0</div>
-        <canvas id="canvas" width="400" height="400"></canvas>
-        <div id="state"></div>
-        <button id="replay">Replay</button>
-        
-        <div class="controls">
-            <div class="key" id="key-w">W</div>
-            <div class="key" id="key-a">A</div>
-            <div class="key" id="key-s">S</div>
-            <div class="key" id="key-d">D</div>
+    <div class="game-container">
+        <div class="game-area">
+            <div id="score-container">Score: 0</div>
+            <canvas id="canvas" width="400" height="400"></canvas>
+            <div id="state"></div>
+            <button id="replay">Replay</button>
         </div>
         
-        <div class="mobile-controls">
-            <div class="mobile-btn up-btn">↑</div>
-            <div class="mobile-btn left-btn">←</div>
-            <div class="mobile-btn right-btn">→</div>
-            <div class="mobile-btn down-btn">↓</div>
-        </div>
-        
-        <div class="instructions">
-            <p>Use <strong>WASD</strong> keys or on-screen buttons to control the snake. Eat the red food to grow and earn points!</p>
+        <div class="controls-area">
+            <div class="desktop-controls">
+                <div class="key" id="key-w">W</div>
+                <div class="key" id="key-a">A</div>
+                <div class="key" id="key-s">S</div>
+                <div class="key" id="key-d">D</div>
+            </div>
+            
+            <div class="mobile-controls">
+                <div class="mobile-btn up-btn">↑</div>
+                <div class="mobile-btn left-btn">←</div>
+                <div class="mobile-btn right-btn">→</div>
+                <div class="mobile-btn down-btn">↓</div>
+            </div>
+            
+            <div class="instructions">
+                <p>Use <strong>WASD</strong> keys or on-screen buttons to control the snake. Eat the red food to grow and earn points!</p>
+            </div>
         </div>
     </div>
+
     <script src="snake.js"></script>
 </body>
 </html>

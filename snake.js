@@ -1,28 +1,25 @@
-        // Initialize canvas and context
+ // Initialize canvas and context
         var canvas = document.getElementById("canvas");
         var ctx = canvas.getContext("2d");
         
         // Set canvas dimensions based on device
         function resizeCanvas() {
-            const container = canvas.parentElement;
-            const maxWidth = Math.min(container.clientWidth, 500);
-            const size = Math.min(maxWidth, window.innerHeight * 0.6);
-            canvas.width = size;
-            canvas.height = size;
+            const gameArea = document.querySelector('.game-area');
+            const maxWidth = Math.min(gameArea.clientWidth - 20, gameArea.clientHeight - 20, 500);
+            canvas.width = maxWidth;
+            canvas.height = maxWidth;
         }
         
         // Initialize snake variables
         var snakeSize = 10;
         var snake = [];
         var snakeLength = 5;
-        var snakeX = Math.floor(canvas.width / (2 * snakeSize)) * snakeSize; // Align to grid
-        var snakeY = Math.floor(canvas.height / (2 * snakeSize)) * snakeSize; // Align to grid
+        var snakeX, snakeY;
         var snakeDirection = "right";
         var nextDirection = "right";
         
         // Initialize food variables
-        var foodX = Math.floor(Math.random() * (canvas.width / snakeSize)) * snakeSize;
-        var foodY = Math.floor(Math.random() * (canvas.height / snakeSize)) * snakeSize;
+        var foodX, foodY;
         
         // Initialize game variables
         var gameRunning = true;
@@ -32,9 +29,8 @@
         var lastUpdateTime = 0;
         
         // Speed control variables
-        var baseSpeed = 150; // Base delay in milliseconds (slower = higher number)
+        var baseSpeed = 150; // Base delay in milliseconds
         var currentSpeed = baseSpeed;
-        var speedMultiplier = 1;
         
         // Add initial snake segments
         function initSnake() {
@@ -45,6 +41,12 @@
             for (var i = 0; i < snakeLength; i++) {
                 snake.push({ x: snakeX - i * snakeSize, y: snakeY });
             }
+        }
+        
+        // Initialize food
+        function initFood() {
+            foodX = Math.floor(Math.random() * (canvas.width / snakeSize)) * snakeSize;
+            foodY = Math.floor(Math.random() * (canvas.height / snakeSize)) * snakeSize;
         }
         
         // Draw snake and food
@@ -149,10 +151,10 @@
                 
                 // Increase score
                 score++;
-                document.getElementById("score").innerHTML = "Score: " + score;
+                document.getElementById("score-container").innerHTML = "Score: " + score;
                 
-                // Increase speed every 3 points (adjust as needed)
-                if (score > 0 && score % 3 === 0) {
+                // Increase speed every 5 points (more gradual increase)
+                if (score > 0 && score % 5 === 0) {
                     increaseSpeed();
                 }
             }
@@ -188,13 +190,11 @@
         function increaseSpeed() {
             // Reduce the delay to make the game faster
             // Minimum speed limit to prevent it from becoming unplayable
-            const minSpeed = 50;
-            const speedReduction = 10; // Reduce delay by 10ms each time
+            const minSpeed = 60;
+            const speedReduction = 8; // Reduce delay by 8ms each time
             
             if (currentSpeed > minSpeed) {
                 currentSpeed = Math.max(minSpeed, currentSpeed - speedReduction);
-                speedMultiplier = (baseSpeed / currentSpeed).toFixed(1);
-                document.getElementById("speed-info").innerHTML = "Speed: " + speedMultiplier + "x";
             }
         }
         
@@ -282,22 +282,19 @@
             gameRunning = true;
             state = "";
             currentSpeed = baseSpeed;
-            speedMultiplier = 1;
-            document.getElementById("score").innerHTML = "Score: " + score;
-            document.getElementById("speed-info").innerHTML = "Speed: " + speedMultiplier + "x";
+            document.getElementById("score-container").innerHTML = "Score: " + score;
             document.getElementById("state").style.display = "none";
             document.getElementById("replay").style.display = "none";
             
             // Reinitialize snake and food
             initSnake();
-            foodX = Math.floor(Math.random() * (canvas.width / snakeSize)) * snakeSize;
-            foodY = Math.floor(Math.random() * (canvas.height / snakeSize)) * snakeSize;
+            initFood();
             
             // Restart game loop
             if (gameLoopId) {
                 cancelAnimationFrame(gameLoopId);
             }
-            lastUpdateTime = 0;
+            lastUpdateTime = performance.now();
             gameLoop();
         });
         
@@ -319,6 +316,7 @@
         window.addEventListener('load', () => {
             resizeCanvas();
             initSnake();
+            initFood();
             lastUpdateTime = performance.now();
             gameLoop();
         });
@@ -326,15 +324,16 @@
         // Handle window resize
         window.addEventListener('resize', () => {
             resizeCanvas();
-            // Adjust snake and food positions if canvas size changed significantly
+            // Reinitialize positions if canvas size changed
             if (snake.length > 0) {
-                const head = snake[0];
-                // Realign positions to grid after resize
-                snakeX = Math.floor(head.x / snakeSize) * snakeSize;
-                snakeY = Math.floor(head.y / snakeSize) * snakeSize;
-                snake[0] = {x: snakeX, y: snakeY};
-                
-                if (foodX >= canvas.width) foodX = Math.floor(Math.random() * (canvas.width / snakeSize)) * snakeSize;
-                if (foodY >= canvas.height) foodY = Math.floor(Math.random() * (canvas.height / snakeSize)) * snakeSize;
+                initSnake();
+                initFood();
             }
         });
+        
+        // Prevent scrolling on mobile when touching the game
+        document.addEventListener('touchmove', function(e) {
+            if (e.target.closest('.game-area') || e.target.closest('.mobile-controls')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
