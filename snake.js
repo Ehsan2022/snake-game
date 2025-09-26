@@ -1,13 +1,16 @@
- // Initialize canvas and context
+  // Initialize canvas and context
         var canvas = document.getElementById("canvas");
         var ctx = canvas.getContext("2d");
         
         // Set canvas dimensions based on device
         function resizeCanvas() {
             const gameArea = document.querySelector('.game-area');
-            const maxWidth = Math.min(gameArea.clientWidth - 20, gameArea.clientHeight - 20, 500);
-            canvas.width = maxWidth;
-            canvas.height = maxWidth;
+            // Calculate available space minus padding and title/score
+            const availableHeight = gameArea.clientHeight - 80; // Account for title and score
+            const availableWidth = gameArea.clientWidth - 20;
+            const maxSize = Math.min(availableWidth, availableHeight, 500);
+            canvas.width = maxSize;
+            canvas.height = maxSize;
         }
         
         // Initialize snake variables

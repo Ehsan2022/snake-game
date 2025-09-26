@@ -20,22 +20,22 @@
             flex-direction: column;
             height: 100vh;
             width: 100vw;
-            max-width: 100%;
-            position: relative;
         }
         
         .game-area {
-            flex: 0.7;
+            height: 70vh;
+            width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 10px;
             position: relative;
+            padding: 10px;
         }
         
         .controls-area {
-            flex: 0.3;
+            height: 30vh;
+            width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -144,7 +144,7 @@
             gap: 15px;
             width: 100%;
             max-width: 250px;
-            height: 200px;
+            height: 180px;
         }
         
         .mobile-btn {
@@ -191,9 +191,10 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: 800;
+            display: none;
         }
         
-        /* Desktop styles */
+        /* Desktop styles - hide mobile layout elements */
         @media (min-width: 768px) {
             .mobile-controls {
                 display: none !important;
@@ -203,21 +204,12 @@
                 display: flex !important;
             }
             
-            .game-container {
-                height: 100vh;
-                width: 100vw;
-                max-width: 1200px;
-                margin: 0 auto;
-                flex-direction: column;
+            .controls-area {
+                display: none;
             }
             
             .game-area {
-                flex: 1;
-                padding: 20px;
-            }
-            
-            .controls-area {
-                display: none;
+                height: 100vh;
             }
             
             #score-container {
@@ -227,9 +219,13 @@
                 transform: none;
                 left: auto;
             }
+            
+            .game-title {
+                display: block;
+            }
         }
         
-        /* Mobile styles */
+        /* Mobile styles - ensure 70/30 split */
         @media (max-width: 767px) {
             .desktop-controls {
                 display: none !important;
@@ -241,5 +237,11 @@
             
             body {
                 touch-action: none; /* Prevent scrolling during gameplay */
+            }
+            
+            .game-title {
+                display: block;
+                font-size: 24px;
+                margin-bottom: 5px;
             }
         }
